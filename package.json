@@ -1,0 +1,10 @@
+{
+  "name": "revfort",
+  "private": true,
+  "scripts": {
+    "dev:app": "pnpm --filter web-app dev",
+    "dev:website": "pnpm --filter website dev",
+    "build:app": "pnpm --filter web-app build",
+    "build:website": "pnpm --filter website build"
+  }
+}

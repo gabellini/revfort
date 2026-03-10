@@ -1,0 +1,83 @@
+services:
+  api:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile.dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ./api:/app
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+
+  web-app:
+    build:
+      context: .
+      dockerfile: docker/web-app/Dockerfile.dev
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./apps/web-app:/app
+      - ./packages:/packages
+    env_file:
+      - .env
+
+  website:
+    build:
+      context: .
+      dockerfile: docker/website/Dockerfile.dev
+    ports:
+      - "3001:3000"
+    volumes:
+      - ./apps/website:/app
+      - ./packages:/packages
+    env_file:
+      - .env
+
+  db:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: revfort
+      POSTGRES_PASSWORD: revfort
+      POSTGRES_DB: revfort
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  redis:
+    image: redis:7-alpine
+    ports:
+      - "6379:6379"
+
+  celery-worker:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile.dev
+    command: celery -A app.workers.celery_app worker -l info
+    volumes:
+      - ./api:/app
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+
+  celery-beat:
+    build:
+      context: .
+      dockerfile: docker/api/Dockerfile.dev
+    command: celery -A app.workers.celery_app beat -l info
+    volumes:
+      - ./api:/app
+    env_file:
+      - .env
+    depends_on:
+      - db
+      - redis
+
+volumes:
+  pgdata:
