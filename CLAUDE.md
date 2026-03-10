@@ -136,6 +136,7 @@ app/
 ### Git
 - Conventional commits: `feat:`, `fix:`, `refactor:`, `docs:`, `test:`, `chore:`
 - Branch naming: `feat/description`, `fix/description`, `refactor/description`
+- **Do NOT add Co-Authored-By or any co-author trailers to commits** (breaks Vercel deploy)
 
 ## Environment Variables
 
